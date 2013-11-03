@@ -46,17 +46,90 @@ User.prototype.getEmail = function() {
 
 //una sola función
 
-this.get = function(attr) { return this[attr] };
-this.set = function(attr) { return this[attr] = attr };
+User.prototype.getP = function (attr) { return this[attr] };
+
+usuario.getP('email');
+>> "andrearuizmendoza@gmail.com"
+
+User.prototype.setP = function (key, value) { this[key] = value; return this[key] };
+
+usuario.setP('username', 'andrearm10');
+>> "andrearm10"
 
 /*
 Crear un método “inspect” que liste todas las propiedades.
 */
 
-var getPropiedades = function(user){
-   var propiedades = [];
-   for(var propiedad in user){
-      propiedades.push(propiedad);
+User.prototype.inspect = function(){
+   var keys = [];
+   for(var key in this){
+      keys.push(key);
    }
-   return propiedades;
+   return keys;
 }
+
+usuario.inspect();
+>> ["nombre", "apellidos", "username", "email", "getProperty", "getP", "setP", "inspect"]
+
+/*
+Crear un método “postMessage” que guarde un mensaje en la lista de mensajes y 
+devuelva el número de mensajes guardados en la lista. Los mensajes deben ser guardados en una variable privada.
+*/
+var userModule = (function () {
+  var messages = [];
+  return {
+    postMessage : function(message) {
+      messages.push(message);
+      return messages.length;
+    }
+  }
+}
+)();
+>> undefined
+userModule.postMessage('mensaje 1');
+>> 1
+userModule.postMessage('mensaje 2');
+>> 2
+
+/*
+⦁ Crear un módulo Users que permita:
+⦁ Registrar usuarios. Verificar que el objeto a agregar sea una instancia de la clase User.
+⦁ Validar si el usuario o correo electrónico ya existe antes de agregar un usuario nuevo.
+⦁ Devolver el número de usuarios registrados.
+⦁ Devolver una lista con una propiedad por cada usuario 
+(ejemplo: Listar todos los correos electrónicos de los usuarios). Se debe poder listar cualquier propiedad definida en el paso 1.
+⦁ Crear un método “totalMessages” que devuelva el número total de mensajes de todos los usuarios. 
+Debe crear un método auxiliar que devuelva el total de mensajes de cada usuario y otro que sume los totales de mensajes 
+de cada usuario usando call o apply.
+*/
+
+var UsersModule = (function () {
+  var users = [];
+  return {
+    exists : function(user) {
+      if (users.indexOf(user.username) != -1 || users.indexOf(user.email) != -1) {
+        return true;
+      }
+      return false;
+    },
+    addUser : function(user) {
+      if (user instanceOf User && !this.exists(user)) {
+        users.push(user);
+      }
+      return users.length;
+    },
+    count: function() {
+      return users.length;
+    },
+    getProperty: function(property) {
+      var properties = [];
+      for (var usr in users) {
+        if (usr.hasOwnProperty(property)) {
+          properties.push(usr[property]);
+        }
+      }
+      return properties;
+    }
+  }
+}
+)();
