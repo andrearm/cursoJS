@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <style type="text/css">
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    a {
+      color: #3498db;
+    }
+
+    .photo {
+      display: block;
+      width: 766px;
+      background: #fefefe;
+      border: solid 1px #f0f0f0;
+      border-radius: 3px;
+      padding: 20px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .photo .photo-content {
+      float: left;
+    }
+
+    .photo .photo-user-image {
+      width: 306px;
+      height: 306px;
+    }
+
+    .photo .user-image {
+      width: 40px;
+      height: 40px;
+      border:2px solid #021a40;
+    }
+
+    .photo .photo-text {
+      float: right;
+      width: 400px;
+      margin: 0 20px;
+    }
+
+    .photo .photo-text small {
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .photo .photo-text p {
+      font-style: italic;
+    }
+
+    .photo .photo-source {
+      display: block;
+      width: 100%;
+      clear: both;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: solid 1px #f0f0f0;
+      font-size: 12px;
+    }
+    .photo .user-name {
+      color: #3f729b;
+      font-size: 18px;
+      font-weight: bold;
+
+    }
+  </style>
+</head>
+<body>
+  <div id="photos"></div>
+  <script type="text/javascript">
+    $.fn.appendPhoto = function(template, photo) {
+      var photo_content = template;
+      photo_content = photo_content.replace('{{id}}', photo.id);
+      photo_content = photo_content.replace('{{image_url}}', photo.images.low_resolution.url);
+      photo_content = photo_content.replace('{{created_time}}', photo.created_time);
+      photo_content = photo_content.replace('{{text}}', photo.caption.text);
+      photo_content = photo_content.replace('{{user_image}}', photo.user.profile_picture);
+      photo_content = photo_content.replace(/{{user_name}}/g, photo.user.username);
+
+      return $(this).append(photo_content);
+    };
+
+    var xhr = $.getJSON('http://coffeemaker.herokuapp.com/instagram.json', { q: 'latte' });
+    
+    xhr.done(function(photos) {
+      var data = photos.data;
+      var photos_container = $('#photos'),
+          template = $('#template-photo').html(),
+          i;
+
+      for(i = 0; i < data.length; i++) {
+        photos_container.appendPhoto(template, data[i]);
+      }
+    });
+  </script>
+  <script type="text/html" id="template-photo">
+    <div class="photo" id="photo-{{id}}">
+      <div class="photo-content">
+        <img class="photo-user-image" src="{{image_url}}" />
+      </div>
+      <div class="photo-text">
+          <img class="user-image" src="{{user_image}}">
+          <a class="user-name" href="http://instagram.com/{{user_name}}">{{user_name}}</a>
+          <p>{{text}}</p>
+        </div>
+    </div>
+  </script>
+</body>
+</html>
